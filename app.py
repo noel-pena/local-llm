@@ -21,3 +21,33 @@ async def start_chat():
         await msg.stream_token(token)
 
     await msg.send()
+
+@cl.step(type="tool")
+async def tool(input_message):
+
+    interaction = cl.user_session.get("interaction")
+
+    interaction.append({"role": "user",
+                        "content": input_message})
+
+    response = ollama.chat(model="deepseek-r1",
+                           messages=interaction)
+
+    interaction.append({"role": "assistant",
+                        "content": response.message.content})
+
+    return response
+
+@cl.on_message
+async def main(message: cl.Message):
+    ollama.pull("deepseek-r1")
+
+    tool_res = await tool(message.content)
+
+    msg = cl.Message(content="")
+
+    for token in tool_res.message.content:
+        await msg.stream_token(token)
+
+    await msg.send()
+
