@@ -4,3 +4,4 @@ venv
 .files
 chainlit.md
 /.idea
+.DS_store
