@@ -30,7 +30,7 @@ async def tool(input_message):
     interaction.append({"role": "user",
                         "content": input_message})
 
-    response = ollama.chat(model="deepseek-r1:32b",
+    response = ollama.chat(model="deepseek-r1",
                            messages=interaction)
 
     interaction.append({"role": "assistant",
