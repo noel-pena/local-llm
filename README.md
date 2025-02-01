@@ -18,5 +18,5 @@
    ```
 3. On a new terminal, run app:
     ```
-    chainlit run src.app.py -w
+    chainlit run src/app.py -w
     ```

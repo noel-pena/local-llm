@@ -1,5 +1,6 @@
 import chainlit as cl
 import ollama
+from engineio.payload import Payload
 
 @cl.on_chat_start
 async def start_chat():
@@ -40,6 +41,7 @@ async def tool(input_message):
 
 @cl.on_message
 async def main(message: cl.Message):
+    Payload.max_decode_packets = 50
 
     tool_res = await tool(message.content)
 
