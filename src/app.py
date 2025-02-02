@@ -41,7 +41,7 @@ async def tool(input_message):
 
 @cl.on_message
 async def main(message: cl.Message):
-    Payload.max_decode_packets = 50
+    Payload.max_decode_packets = 500
 
     tool_res = await tool(message.content)
 
