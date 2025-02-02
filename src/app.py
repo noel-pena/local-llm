@@ -25,19 +25,21 @@ async def start_chat():
 
 @cl.step(type="tool")
 async def tool(input_message):
+    try:
+        interaction = cl.user_session.get("interaction")
 
-    interaction = cl.user_session.get("interaction")
+        interaction.append({"role": "user",
+                            "content": input_message})
 
-    interaction.append({"role": "user",
-                        "content": input_message})
+        response = ollama.chat(model="deepseek-r1",
+                               messages=interaction)
 
-    response = ollama.chat(model="deepseek-r1",
-                           messages=interaction)
+        interaction.append({"role": "assistant",
+                            "content": response.message.content})
 
-    interaction.append({"role": "assistant",
-                        "content": response.message.content})
-
-    return response
+        return response
+    except ValueError as e:
+        raise ValueError(f"Request processing failed. Details: {e}") from None
 
 @cl.on_message
 async def main(message: cl.Message):
