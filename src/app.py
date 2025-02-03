@@ -1,10 +1,11 @@
-import chainlit as cl
+import chainlit
 import ollama
 from engineio.payload import Payload
 
-@cl.on_chat_start
+# Initializes the chat session
+@chainlit.on_chat_start
 async def start_chat():
-    cl.user_session.set(
+    chainlit.user_session.set(
         "interaction",
         [
             {
@@ -14,7 +15,7 @@ async def start_chat():
         ],
     )
 
-    msg = cl.Message(content="")
+    msg = chainlit.Message(content="")
 
     start_message = """Hello, I am your local AI assistant running on DeepSeek-R1. How can I help you today?"""
 
@@ -23,10 +24,11 @@ async def start_chat():
 
     await msg.send()
 
-@cl.step(type="tool")
+# Processes user input using Ollama
+@chainlit.step(type="tool")
 async def tool(input_message):
     try:
-        interaction = cl.user_session.get("interaction")
+        interaction = chainlit.user_session.get("interaction")
 
         interaction.append({"role": "user",
                             "content": input_message})
@@ -41,13 +43,14 @@ async def tool(input_message):
     except ValueError as e:
         raise ValueError(f"Request processing failed. Details: {e}") from None
 
-@cl.on_message
-async def main(message: cl.Message):
+# Handles incoming messages in real-time
+@chainlit.on_message
+async def main(message: chainlit.Message):
     Payload.max_decode_packets = 500
 
     tool_res = await tool(message.content)
 
-    msg = cl.Message(content="")
+    msg = chainlit.Message(content="")
 
     for token in tool_res.message.content:
         await msg.stream_token(token)
